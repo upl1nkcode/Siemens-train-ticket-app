@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('Train Bookings')"></head>
+<body>
+    <nav th:replace="layout :: sidebar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <div>
+                <a th:href="@{/admin/trains}" style="color: var(--text-muted); text-decoration: none; margin-bottom: 0.5rem; display: inline-block;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Trains
+                </a>
+                <h1 class="page-title" th:text="'Bookings for ' + ${train.name}">Bookings</h1>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Schedule ID</th>
+                            <th>Passenger</th>
+                            <th>Email</th>
+                            <th>Seats</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="b : ${bookings}">
+                            <td th:text="'#' + ${b.id}"></td>
+                            <td th:text="${b.schedule.id}"></td>
+                            <td th:text="${b.passengerName}"></td>
+                            <td th:text="${b.email}"></td>
+                            <td th:text="${b.seatsBooked}"></td>
+                        </tr>
+                        <tr th:if="${bookings.isEmpty()}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted);">No bookings found for this train.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

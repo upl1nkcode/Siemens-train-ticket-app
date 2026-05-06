@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('Manage Trains')"></head>
+<body>
+    <nav th:replace="layout :: sidebar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Trains & Schedules</h1>
+        </div>
+
+        <div th:replace="layout :: alerts"></div>
+
+        <!-- Trains Section -->
+        <h2 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Train Fleet</h2>
+        <div class="dashboard-grid">
+            <div class="glass-card" style="align-self: start;">
+                <h3 style="margin-bottom: 1.5rem;">Add New Train</h3>
+                <form th:action="@{/admin/trains/add}" method="post">
+                    <div class="form-group">
+                        <label class="form-label">Train Name/Identifier</label>
+                        <input type="text" name="name" class="form-control" required placeholder="e.g. IR 1581">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Seats</label>
+                        <input type="number" name="totalSeats" class="form-control" min="1" required placeholder="e.g. 200">
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fa-solid fa-plus"></i> Add Train
+                    </button>
+                </form>
+            </div>
+            
+            <div class="glass-card" style="grid-column: span 2;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Seats</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="t : ${trains}">
+                                <td th:text="${t.id}"></td>
+                                <td th:text="${t.name}"></td>
+                                <td th:text="${t.totalSeats}"></td>
+                                <td>
+                                    <span th:class="${t.status.name() == 'ON_TIME'} ? 'badge badge-success' : 'badge badge-warning'"
+                                          th:text="${t.status.name() == 'ON_TIME' ? 'ON TIME' : 'DELAYED (' + t.delayMinutes + 'm)'}">
+                                    </span>
+                                </td>
+                                <td style="display: flex; gap: 0.5rem;">
+                                    <form th:action="@{/admin/trains/delay/{id}(id=${t.id})}" method="post" style="display: flex; gap: 0.5rem;">
+                                        <input type="number" name="delayMinutes" class="form-control" style="width: 70px; padding: 0.4rem; font-size: 0.85rem;" placeholder="Mins" required>
+                                        <button type="submit" class="btn btn-sm btn-warning" style="background: var(--warning); color: #fff;">Report Delay</button>
+                                    </form>
+                                    <form th:action="@{/admin/trains/delete/{id}(id=${t.id})}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this train?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedules Section -->
+        <h2 style="margin-top: 2rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Active Schedules</h2>
+        <div class="dashboard-grid">
+            <div class="glass-card" style="align-self: start;">
+                <h3 style="margin-bottom: 1.5rem;">Add Schedule</h3>
+                <form th:action="@{/admin/trains/schedules/add}" method="post">
+                    <div class="form-group">
+                        <label class="form-label">Train</label>
+                        <select name="trainId" class="form-control" required>
+                            <option th:each="t : ${trains}" th:value="${t.id}" th:text="${t.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Route</label>
+                        <select name="routeId" class="form-control" required>
+                            <option th:each="r : ${routes}" th:value="${r.id}" th:text="${r.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Departure Time</label>
+                        <input type="datetime-local" name="departureTime" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        <i class="fa-solid fa-plus"></i> Add Schedule
+                    </button>
+                </form>
+            </div>
+            
+            <div class="glass-card" style="grid-column: span 2;">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Train</th>
+                                <th>Route</th>
+                                <th>Departure</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="s : ${schedules}">
+                                <td th:text="${s.id}"></td>
+                                <td th:text="${s.train.name}"></td>
+                                <td th:text="${s.route.name}"></td>
+                                <td th:text="${s.departureTime}"></td>
+                                <td>
+                                    <form th:action="@{/admin/trains/schedules/delete/{id}(id=${s.id})}" method="post">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this schedule?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>

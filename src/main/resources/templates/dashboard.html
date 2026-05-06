@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('Dashboard')"></head>
+<body>
+    <nav th:replace="layout :: sidebar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="glass-card stat-card">
+                <span class="stat-label">Total Stations</span>
+                <span class="stat-value" th:text="${stationCount}">0</span>
+                <i class="fa-solid fa-location-dot" style="color: var(--text-muted); font-size: 1.5rem; align-self: flex-end; margin-top: -30px;"></i>
+            </div>
+            
+            <div class="glass-card stat-card">
+                <span class="stat-label">Active Routes</span>
+                <span class="stat-value" th:text="${routeCount}">0</span>
+                <i class="fa-solid fa-map" style="color: var(--text-muted); font-size: 1.5rem; align-self: flex-end; margin-top: -30px;"></i>
+            </div>
+
+            <div class="glass-card stat-card">
+                <span class="stat-label">Trains Fleet</span>
+                <span class="stat-value" th:text="${trainCount}">0</span>
+                <i class="fa-solid fa-train" style="color: var(--text-muted); font-size: 1.5rem; align-self: flex-end; margin-top: -30px;"></i>
+            </div>
+
+            <div class="glass-card stat-card">
+                <span class="stat-label">Scheduled Departures</span>
+                <span class="stat-value" th:text="${scheduleCount}">0</span>
+                <i class="fa-solid fa-clock" style="color: var(--text-muted); font-size: 1.5rem; align-self: flex-end; margin-top: -30px;"></i>
+            </div>
+        </div>
+        
+        <div class="glass-card">
+            <h2 style="margin-bottom: 1rem;">System Status</h2>
+            <p style="color: var(--text-muted);">All systems are operational. H2 in-memory database is active. SMTP email notifications are enabled.</p>
+        </div>
+    </main>
+</body>
+</html>

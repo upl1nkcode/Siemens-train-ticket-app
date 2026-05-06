@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('Book Tickets')"></head>
+<body>
+    <nav th:replace="layout :: sidebar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Book Tickets</h1>
+        </div>
+
+        <div th:replace="layout :: alerts"></div>
+
+        <div class="dashboard-grid">
+            <div class="glass-card" style="grid-column: span 2;">
+                <h2 style="margin-bottom: 1.5rem;">New Booking</h2>
+                
+                <form th:action="@{/book}" method="post">
+                    <div class="form-group">
+                        <label class="form-label">Select Schedule</label>
+                        <select name="scheduleId" class="form-control" required>
+                            <option value="">-- Choose a schedule --</option>
+                            <option th:each="s : ${schedules}" 
+                                    th:value="${s.id}" 
+                                    th:text="${s.train.name + ' | ' + s.route.name + ' | Departs: ' + s.departureTime}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Passenger Name</label>
+                            <input type="text" name="passengerName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="email" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Number of Seats</label>
+                        <input type="number" name="seats" class="form-control" min="1" max="10" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        <i class="fa-solid fa-ticket"></i> Confirm Booking
+                    </button>
+                </form>
+            </div>
+            
+            <div class="glass-card">
+                <h2 style="margin-bottom: 1rem;">Booking Info</h2>
+                <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem;">
+                    Tickets are non-refundable. Please ensure passenger details exactly match their ID.
+                </p>
+                <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                    <i class="fa-solid fa-envelope" style="color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem;">E-Tickets</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">
+                        A confirmation email containing the e-ticket will be automatically dispatched to the provided address.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

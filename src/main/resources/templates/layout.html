@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' | Train Booking System'">Train Booking System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <nav th:fragment="sidebar" class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fa-solid fa-train"></i> TrainTicket
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Main</div>
+            <a th:href="@{/}" class="nav-link" th:classappend="${#request.requestURI == '/'} ? 'active' : ''">
+                <i class="fa-solid fa-chart-pie fa-fw" style="margin-right: 10px;"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Customer</div>
+            <a th:href="@{/book}" class="nav-link" th:classappend="${#request.requestURI == '/book'} ? 'active' : ''">
+                <i class="fa-solid fa-ticket fa-fw" style="margin-right: 10px;"></i> Book Tickets
+            </a>
+            <a th:href="@{/find-routes}" class="nav-link" th:classappend="${#request.requestURI == '/find-routes'} ? 'active' : ''">
+                <i class="fa-solid fa-route fa-fw" style="margin-right: 10px;"></i> Find Routes
+            </a>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-label">Admin</div>
+            <a th:href="@{/admin/stations}" class="nav-link" th:classappend="${#request.requestURI == '/admin/stations'} ? 'active' : ''">
+                <i class="fa-solid fa-location-dot fa-fw" style="margin-right: 10px;"></i> Stations
+            </a>
+            <a th:href="@{/admin/routes}" class="nav-link" th:classappend="${#request.requestURI == '/admin/routes'} ? 'active' : ''">
+                <i class="fa-solid fa-map fa-fw" style="margin-right: 10px;"></i> Routes
+            </a>
+            <a th:href="@{/admin/trains}" class="nav-link" th:classappend="${#request.requestURI == '/admin/trains'} ? 'active' : ''">
+                <i class="fa-solid fa-train-subway fa-fw" style="margin-right: 10px;"></i> Trains & Schedules
+            </a>
+        </div>
+    </nav>
+
+    <div th:fragment="alerts">
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fa-solid fa-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+    </div>
+
+</body>
+</html>

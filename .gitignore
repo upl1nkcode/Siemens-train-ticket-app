@@ -1,0 +1,17 @@
+# Maven
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven Wrapper jar (downloaded at build time)
+.mvn/wrapper/maven-wrapper.jar

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout :: head('Find Routes')"></head>
+<body>
+    <nav th:replace="layout :: sidebar"></nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Find Routes</h1>
+        </div>
+
+        <div th:replace="layout :: alerts"></div>
+
+        <div class="glass-card" style="margin-bottom: 2rem;">
+            <form th:action="@{/find-routes}" method="post" style="display: flex; gap: 1.5rem; align-items: flex-end;">
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label class="form-label">Origin Station</label>
+                    <select name="origin" class="form-control" required>
+                        <option value="">-- From --</option>
+                        <option th:each="s : ${stations}" th:value="${s.name}" th:text="${s.name}" th:selected="${s.name == origin}"></option>
+                    </select>
+                </div>
+                
+                <div style="padding-bottom: 0.75rem; color: var(--text-muted);">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                </div>
+
+                <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                    <label class="form-label">Destination Station</label>
+                    <select name="destination" class="form-control" required>
+                        <option value="">-- To --</option>
+                        <option th:each="s : ${stations}" th:value="${s.name}" th:text="${s.name}" th:selected="${s.name == destination}"></option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="height: 45px;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                </button>
+            </form>
+        </div>
+
+        <div th:if="${connections != null}">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Search Results</h2>
+            
+            <div th:if="${connections.isEmpty()}" style="color: var(--text-muted);">
+                No connections found.
+            </div>
+
+            <div class="dashboard-grid">
+                <div th:each="conn, iterStat : ${connections}" class="glass-card" style="grid-column: span 2;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h3 th:text="'Option ' + ${iterStat.count}">Option 1</h3>
+                        <span class="badge badge-primary" th:text="${#strings.contains(conn, 'Direct') ? 'Direct' : 'Changeover'}">Direct</span>
+                    </div>
+                    <pre style="color: var(--text-muted); font-size: 0.95rem; white-space: pre-wrap; font-family: inherit;" th:text="${conn}"></pre>
+                    <a th:href="@{/book}" class="btn btn-sm btn-primary" style="margin-top: 1rem;">Book this route</a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</body>
+</html>
