@@ -1,6 +1,10 @@
 # Train Ticket Booking System
 
+<<<<<<< HEAD
 A web-based Java Spring Boot application for managing train schedules, booking tickets, finding routes between stations, and performing administrative operations — with email notifications for booking confirmations and delay alerts.
+=======
+A console-based Java application (with an Web GUI implementation) for managing train schedules, booking tickets, finding routes between stations, and performing administrative operations — with email notifications for booking confirmations and delay alerts.
+>>>>>>> 21e352beec277981529ce5fb370d07ff87b441bd
 
 Built as part of the Siemens Summer Practice Program 2026 technical assessment.
 
