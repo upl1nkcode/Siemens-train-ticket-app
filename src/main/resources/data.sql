@@ -10,6 +10,8 @@ INSERT INTO stations (name) VALUES ('Iasi');
 INSERT INTO routes (name) VALUES ('Bucharest - Brasov Express');
 INSERT INTO routes (name) VALUES ('Brasov - Cluj via Sibiu');
 INSERT INTO routes (name) VALUES ('Bucharest - Iasi Direct');
+INSERT INTO routes (name) VALUES ('Timisoara - Iasi Crossing');
+INSERT INTO routes (name) VALUES ('Bucharest - Timisoara Direct');
 
 -- Route stops (ordered)
 -- Route 1: Bucharest -> Brasov
@@ -25,12 +27,26 @@ INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (2, 3, 3);
 INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (3, 1, 1);
 INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (3, 6, 2);
 
+-- Route 4: Timisoara -> Cluj-Napoca -> Iasi
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (4, 4, 1);
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (4, 3, 2);
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (4, 6, 3);
+
+-- Route 5: Bucharest -> Sibiu -> Timisoara
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (5, 1, 1);
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (5, 5, 2);
+INSERT INTO route_stops (route_id, station_id, stop_order) VALUES (5, 4, 3);
+
 -- Trains
 INSERT INTO trains (name, total_seats, status, delay_minutes) VALUES ('IR 1581', 200, 'ON_TIME', 0);
 INSERT INTO trains (name, total_seats, status, delay_minutes) VALUES ('IR 1732', 150, 'ON_TIME', 0);
 INSERT INTO trains (name, total_seats, status, delay_minutes) VALUES ('IR 1990', 180, 'ON_TIME', 0);
+INSERT INTO trains (name, total_seats, status, delay_minutes) VALUES ('IR 2231', 200, 'ON_TIME', 0);
+INSERT INTO trains (name, total_seats, status, delay_minutes) VALUES ('IR 2244', 150, 'ON_TIME', 0);
 
 -- Schedules
 INSERT INTO schedules (train_id, route_id, departure_time) VALUES (1, 1, '2026-06-15 08:30:00');
 INSERT INTO schedules (train_id, route_id, departure_time) VALUES (2, 2, '2026-06-15 12:00:00');
 INSERT INTO schedules (train_id, route_id, departure_time) VALUES (3, 3, '2026-06-15 06:45:00');
+INSERT INTO schedules (train_id, route_id, departure_time) VALUES (4, 4, '2026-06-15 09:15:00');
+INSERT INTO schedules (train_id, route_id, departure_time) VALUES (5, 5, '2026-06-15 14:30:00');
