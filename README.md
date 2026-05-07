@@ -20,16 +20,19 @@ Built as part of the Siemens Summer Practice Program 2026 technical assessment.
 | **Admin — Schedules** | Create or remove schedules (train + route + departure time) |
 | **Admin — Bookings** | View all bookings made for any train |
 | **Admin — Delays** | Report a delay for a train; all booked passengers are notified instantly via email |
+| **REST API** | Full JSON API alongside the web UI for programmatic access (Postman, curl, integrations) |
+| **Input Validation** | Robust Bean Validation (JSR 380) protecting the service layer from invalid data |
 
 ---
 
 ## Tech Stack
 
 - **Java 11** (OpenJDK)
-- **Spring Boot 2.7** (Spring Web, Spring Data JPA, Spring Mail)
+- **Spring Boot 2.7** (Spring Web, Spring Data JPA, Spring Mail, Spring Validation)
 - **Thymeleaf** — Server-side template engine for rendering the UI
 - **H2 Database** — in-memory, zero-config relational database
 - **Maven Wrapper** — no Maven installation needed
+- **JUnit 5 & Mockito** — Comprehensive unit testing suite with JaCoCo coverage
 
 ---
 
@@ -49,10 +52,24 @@ export JAVA_HOME=/path/to/jdk-11
 ./mvnw spring-boot:run
 ```
 
-Once running, open your browser and navigate to:
+Once running, open your browser and navigate to the web dashboard:
 **http://localhost:8080**
 
+The application also exposes a full REST API. You can test it by navigating to:
+**http://localhost:8080/api/trains**
+
 The application starts with preloaded seed data (6 Romanian cities, 5 routes, 5 trains, 5 schedules) so you can test immediately.
+
+### Running Tests
+To run the automated test suite and generate a JaCoCo coverage report:
+```bash
+# Windows
+mvnw.cmd test
+
+# Linux / macOS
+./mvnw test
+```
+The coverage report will be available at `target/site/jacoco/index.html`.
 
 ---
 
@@ -91,6 +108,8 @@ To enable real emails using a Gmail account:
 ## Architecture Notes
 
 - **Web MVC Pattern**: Replaced the original CLI interface with standard Spring `@Controller` classes and Thymeleaf HTML templates.
+- **REST API Layer**: Parallel `@RestController` classes expose JSON endpoints, reusing the core business services. A `@RestControllerAdvice` globally handles custom exceptions, mapping them to standard HTTP status codes (e.g., 400, 404).
+- **Defensive Programming**: Input validation (JSR 380) is strictly enforced at the `@Service` layer via `@Validated`, ensuring data integrity regardless of the entry point (Web UI or REST API).
 - **Route finding**: Uses BFS graph traversal across the station adjacency graph derived from all routes. It finds both direct and multi-leg (changeover) journeys.
 - **Overbooking prevention**: Enforced at the service layer by querying the sum of booked seats before accepting a new booking.
 - **Null Safety**: All service parameters are rigorously protected with `Objects.requireNonNull()`.
