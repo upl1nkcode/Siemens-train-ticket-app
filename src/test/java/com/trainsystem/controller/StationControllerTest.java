@@ -7,8 +7,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,6 +42,21 @@ class StationControllerTest {
                 .andExpect(redirectedUrl("/admin/stations"));
 
         verify(routeService).createStation("Constanta");
+    }
+
+    @Test
+    void AddStation_ValidationFailure_RedirectsWithErrorMessage() throws Exception {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("Station name is required");
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
+
+        when(routeService.createStation(anyString())).thenThrow(ex);
+
+        mockMvc.perform(post("/admin/stations/add")
+                        .param("name", ""))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/stations"))
+                .andExpect(flash().attributeExists("errorMessage"));
     }
 
     @Test

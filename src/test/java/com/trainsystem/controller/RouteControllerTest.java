@@ -7,9 +7,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,6 +60,22 @@ class RouteControllerTest {
                 .andExpect(flash().attributeExists("errorMessage"));
 
         verify(routeService, never()).createRoute(anyString(), anyList());
+    }
+
+    @Test
+    void AddRoute_ValidationFailure_RedirectsWithErrorMessage() throws Exception {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("Route name is required");
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
+
+        when(routeService.createRoute(anyString(), anyList())).thenThrow(ex);
+
+        mockMvc.perform(post("/admin/routes/add")
+                        .param("name", "")
+                        .param("stationIds", "1", "2"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/routes"))
+                .andExpect(flash().attributeExists("errorMessage"));
     }
 
     @Test

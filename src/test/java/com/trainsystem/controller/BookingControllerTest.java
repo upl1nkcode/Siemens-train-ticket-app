@@ -11,8 +11,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -68,6 +71,25 @@ class BookingControllerTest {
                         .param("passengerName", "Andrei")
                         .param("email", "a@test.com")
                         .param("seats", "5"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/book"))
+                .andExpect(flash().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void BookTickets_ValidationFailure_RedirectsWithErrorMessage() throws Exception {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("Passenger name is required");
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
+
+        when(bookingService.bookTickets(anyLong(), anyString(), anyString(), anyInt()))
+                .thenThrow(ex);
+
+        mockMvc.perform(post("/book")
+                        .param("scheduleId", "1")
+                        .param("passengerName", "")
+                        .param("email", "a@test.com")
+                        .param("seats", "2"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/book"))
                 .andExpect(flash().attributeExists("errorMessage"));

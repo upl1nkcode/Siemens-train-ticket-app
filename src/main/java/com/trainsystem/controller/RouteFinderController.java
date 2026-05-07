@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Controller
@@ -41,6 +42,9 @@ public class RouteFinderController {
             model.addAttribute("connections", connections);
         } catch (NoRouteFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().iterator().next().getMessage();
+            model.addAttribute("errorMessage", msg);
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error: " + e.getMessage());
         }

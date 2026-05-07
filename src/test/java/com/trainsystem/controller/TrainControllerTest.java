@@ -12,8 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -51,6 +54,22 @@ class TrainControllerTest {
                 .andExpect(redirectedUrl("/admin/trains"));
 
         verify(trainService).createTrain("IR 3000", 200);
+    }
+
+    @Test
+    void AddTrain_ValidationFailure_RedirectsWithErrorMessage() throws Exception {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("Train name is required");
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
+
+        when(trainService.createTrain(anyString(), anyInt())).thenThrow(ex);
+
+        mockMvc.perform(post("/admin/trains/add")
+                        .param("name", "")
+                        .param("totalSeats", "200"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/trains"))
+                .andExpect(flash().attributeExists("errorMessage"));
     }
 
     @Test

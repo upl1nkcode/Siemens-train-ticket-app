@@ -9,8 +9,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,6 +60,23 @@ class RouteFinderControllerTest {
         mockMvc.perform(post("/find-routes")
                         .param("origin", "Bucharest")
                         .param("destination", "Isolated"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("find-routes"))
+                .andExpect(model().attributeExists("errorMessage"));
+    }
+
+    @Test
+    void FindRoutes_ValidationFailure_ReturnsError() throws Exception {
+        ConstraintViolation<?> violation = mock(ConstraintViolation.class);
+        when(violation.getMessage()).thenReturn("Origin station is required");
+        ConstraintViolationException ex = new ConstraintViolationException(Set.of(violation));
+
+        when(routeService.getAllStations()).thenReturn(List.of());
+        when(routeFinderService.findConnections(anyString(), anyString())).thenThrow(ex);
+
+        mockMvc.perform(post("/find-routes")
+                        .param("origin", "")
+                        .param("destination", "Brasov"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("find-routes"))
                 .andExpect(model().attributeExists("errorMessage"));

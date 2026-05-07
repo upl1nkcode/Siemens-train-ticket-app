@@ -9,10 +9,17 @@ import com.trainsystem.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 public class BookingService {
 
     private final BookingRepository bookingRepository;
@@ -28,7 +35,10 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking bookTickets(Long scheduleId, String passengerName, String email, int seats) {
+    public Booking bookTickets(@NotNull(message = "Schedule ID is required") Long scheduleId, 
+                               @NotBlank(message = "Passenger name is required") String passengerName, 
+                               @NotBlank(message = "Email is required") @Email(message = "Invalid email format") String email, 
+                               @Min(value = 1, message = "At least 1 seat must be booked") int seats) {
         Schedule schedule = scheduleRepository.findById(Objects.requireNonNull(scheduleId))
                 .orElseThrow(() -> new EntityNotFoundException("Schedule", scheduleId));
 

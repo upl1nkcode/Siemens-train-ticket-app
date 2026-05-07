@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.ConstraintViolationException;
+
 @Controller
 public class BookingController {
 
@@ -40,6 +42,9 @@ public class BookingController {
                 "Booking #" + booking.getId() + " confirmed! A confirmation email has been sent to " + email);
         } catch (OverbookingException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().iterator().next().getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }

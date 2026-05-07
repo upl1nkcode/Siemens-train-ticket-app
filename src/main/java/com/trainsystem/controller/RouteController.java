@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Controller
@@ -37,6 +38,9 @@ public class RouteController {
         try {
             routeService.createRoute(name, stationIds);
             redirectAttributes.addFlashAttribute("successMessage", "Route added successfully.");
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().iterator().next().getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

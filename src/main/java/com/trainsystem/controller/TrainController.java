@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 
 @Controller
@@ -46,6 +47,9 @@ public class TrainController {
         try {
             trainService.createTrain(name, totalSeats);
             redirectAttributes.addFlashAttribute("successMessage", "Train added successfully.");
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().iterator().next().getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
@@ -95,6 +99,9 @@ public class TrainController {
         try {
             trainService.reportDelay(id, delayMinutes);
             redirectAttributes.addFlashAttribute("successMessage", "Delay recorded. Passengers have been notified.");
+        } catch (ConstraintViolationException e) {
+            String msg = e.getConstraintViolations().iterator().next().getMessage();
+            redirectAttributes.addFlashAttribute("errorMessage", msg);
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }

@@ -10,10 +10,14 @@ import com.trainsystem.repository.ScheduleRepository;
 import com.trainsystem.repository.StationRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.NotBlank;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Validated
 public class RouteFinderService {
 
     private final StationRepository stationRepository;
@@ -33,7 +37,8 @@ public class RouteFinderService {
      * Returns a list of journey descriptions, each being either a direct ride
      * or a sequence of changeovers.
      */
-    public List<String> findConnections(String fromName, String toName) {
+    public List<String> findConnections(@NotBlank(message = "Origin station is required") String fromName, 
+                                        @NotBlank(message = "Destination station is required") String toName) {
         Station from = stationRepository.findByNameIgnoreCase(fromName)
                 .orElseThrow(() -> new com.trainsystem.exception.EntityNotFoundException("Station", fromName));
         Station to = stationRepository.findByNameIgnoreCase(toName)

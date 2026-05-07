@@ -10,11 +10,15 @@ import com.trainsystem.repository.TrainRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
@@ -39,7 +43,9 @@ public class ScheduleService {
     }
 
     @Transactional
-    public Schedule createSchedule(Long trainId, Long routeId, LocalDateTime departureTime) {
+    public Schedule createSchedule(@NotNull(message = "Train ID is required") Long trainId, 
+                                   @NotNull(message = "Route ID is required") Long routeId, 
+                                   @NotNull(message = "Departure time is required") LocalDateTime departureTime) {
         Train train = trainRepository.findById(Objects.requireNonNull(trainId))
                 .orElseThrow(() -> new EntityNotFoundException("Train", trainId));
         Route route = routeRepository.findById(Objects.requireNonNull(routeId))

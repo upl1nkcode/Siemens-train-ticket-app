@@ -8,10 +8,15 @@ import com.trainsystem.repository.StationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 public class RouteService {
 
     private final RouteRepository routeRepository;
@@ -36,7 +41,7 @@ public class RouteService {
     }
 
     @Transactional
-    public Station createStation(String name) {
+    public Station createStation(@NotBlank(message = "Station name is required") String name) {
         if (stationRepository.existsByNameIgnoreCase(name)) {
             throw new IllegalArgumentException("Station '" + name + "' already exists.");
         }
@@ -51,7 +56,8 @@ public class RouteService {
     }
 
     @Transactional
-    public Route createRoute(String name, List<Long> stationIds) {
+    public Route createRoute(@NotBlank(message = "Route name is required") String name, 
+                             @NotEmpty(message = "At least one station must be selected") List<Long> stationIds) {
         Route route = new Route(name);
         for (int i = 0; i < stationIds.size(); i++) {
             final Long stationId = stationIds.get(i);
@@ -63,7 +69,9 @@ public class RouteService {
     }
 
     @Transactional
-    public Route updateRoute(Long id, String name, List<Long> stationIds) {
+    public Route updateRoute(Long id, 
+                             @NotBlank(message = "Route name is required") String name, 
+                             @NotEmpty(message = "At least one station must be selected") List<Long> stationIds) {
         Route route = getRouteById(id);
         route.setName(name);
         route.getStops().clear();

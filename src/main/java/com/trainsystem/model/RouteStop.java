@@ -13,6 +13,7 @@ public class RouteStop {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Route route;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -9,10 +9,15 @@ import com.trainsystem.repository.TrainRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Validated
 public class TrainService {
 
     private final TrainRepository trainRepository;
@@ -37,13 +42,16 @@ public class TrainService {
     }
 
     @Transactional
-    public Train createTrain(String name, int totalSeats) {
+    public Train createTrain(@NotBlank(message = "Train name is required") String name, 
+                             @Min(value = 1, message = "Total seats must be at least 1") int totalSeats) {
         Train train = new Train(name, totalSeats);
         return trainRepository.save(train);
     }
 
     @Transactional
-    public Train updateTrain(Long id, String name, int totalSeats) {
+    public Train updateTrain(Long id, 
+                             @NotBlank(message = "Train name is required") String name, 
+                             @Min(value = 1, message = "Total seats must be at least 1") int totalSeats) {
         Train train = getTrainById(id);
         train.setName(name);
         train.setTotalSeats(totalSeats);
@@ -57,7 +65,8 @@ public class TrainService {
     }
 
     @Transactional
-    public void reportDelay(Long trainId, int delayMinutes) {
+    public void reportDelay(Long trainId, 
+                            @Min(value = 1, message = "Delay minutes must be at least 1") int delayMinutes) {
         Train train = getTrainById(trainId);
         train.setStatus(TrainStatus.DELAYED);
         train.setDelayMinutes(delayMinutes);
