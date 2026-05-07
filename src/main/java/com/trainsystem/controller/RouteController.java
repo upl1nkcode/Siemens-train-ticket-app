@@ -27,7 +27,7 @@ public class RouteController {
 
     @PostMapping("/add")
     public String addRoute(@RequestParam String name, 
-                           @RequestParam List<Long> stationIds, 
+                           @RequestParam(required = false) List<Long> stationIds, 
                            RedirectAttributes redirectAttributes) {
         if (stationIds == null || stationIds.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "At least one station is required.");
