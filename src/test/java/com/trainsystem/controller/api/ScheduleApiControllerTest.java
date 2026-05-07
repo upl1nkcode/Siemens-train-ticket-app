@@ -44,9 +44,8 @@ class ScheduleApiControllerTest {
         when(scheduleService.createSchedule(anyLong(), anyLong(), any())).thenReturn(schedule);
 
         mockMvc.perform(post("/api/schedules")
-                        .param("trainId", "1")
-                        .param("routeId", "1")
-                        .param("departureTime", "2026-10-10T10:00:00"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"trainId\": 1, \"routeId\": 1, \"departureTime\": \"2026-10-10T10:00:00\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.train.name").value("T1"));
     }

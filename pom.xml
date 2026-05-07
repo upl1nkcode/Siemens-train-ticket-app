@@ -15,7 +15,7 @@
     <artifactId>train-ticket-app</artifactId>
     <version>1.0.0</version>
     <name>Train Ticket Application</name>
-    <description>Console-based train ticketing system with booking, route finding, and admin management</description>
+    <description>Web-based train ticketing system with REST API, booking management, and route finding</description>
 
     <properties>
         <java.version>11</java.version>

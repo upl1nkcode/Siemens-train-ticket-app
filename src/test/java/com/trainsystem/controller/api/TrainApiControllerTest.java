@@ -41,8 +41,8 @@ class TrainApiControllerTest {
         when(trainService.createTrain(anyString(), anyInt())).thenReturn(train);
 
         mockMvc.perform(post("/api/trains")
-                        .param("name", "Fast")
-                        .param("totalSeats", "150"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Fast\", \"totalSeats\": 150}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Fast"));
     }

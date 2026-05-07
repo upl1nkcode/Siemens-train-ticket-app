@@ -46,10 +46,8 @@ class BookingApiControllerTest {
         when(bookingService.bookTickets(anyLong(), anyString(), anyString(), anyInt())).thenReturn(booking);
 
         mockMvc.perform(post("/api/bookings")
-                        .param("scheduleId", "1")
-                        .param("passengerName", "Bob")
-                        .param("email", "bob@test.com")
-                        .param("seats", "1"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"scheduleId\": 1, \"passengerName\": \"Bob\", \"email\": \"bob@test.com\", \"seats\": 1}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.passengerName").value("Bob"));
     }

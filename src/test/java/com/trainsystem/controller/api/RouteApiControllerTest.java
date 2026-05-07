@@ -41,8 +41,8 @@ class RouteApiControllerTest {
         when(routeService.createRoute(anyString(), anyList())).thenReturn(route);
 
         mockMvc.perform(post("/api/routes")
-                        .param("name", "Line B")
-                        .param("stationIds", "1", "2"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"Line B\", \"stationIds\": [1, 2]}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Line B"));
     }

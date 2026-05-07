@@ -7,11 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/schedules")
+@Validated
 public class ScheduleApiController {
 
     private final ScheduleService scheduleService;
@@ -30,12 +34,27 @@ public class ScheduleApiController {
         return scheduleService.getScheduleById(id);
     }
 
+    public static class ScheduleRequest {
+        @NotNull(message = "Train ID is required")
+        private Long trainId;
+
+        @NotNull(message = "Route ID is required")
+        private Long routeId;
+
+        @NotNull(message = "Departure time is required")
+        private LocalDateTime departureTime;
+
+        public Long getTrainId() { return trainId; }
+        public void setTrainId(Long trainId) { this.trainId = trainId; }
+        public Long getRouteId() { return routeId; }
+        public void setRouteId(Long routeId) { this.routeId = routeId; }
+        public LocalDateTime getDepartureTime() { return departureTime; }
+        public void setDepartureTime(LocalDateTime departureTime) { this.departureTime = departureTime; }
+    }
+
     @PostMapping
-    public ResponseEntity<Schedule> createSchedule(
-            @RequestParam Long trainId,
-            @RequestParam Long routeId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime departureTime) {
-        Schedule schedule = scheduleService.createSchedule(trainId, routeId, departureTime);
+    public ResponseEntity<Schedule> createSchedule(@RequestBody @Valid ScheduleRequest req) {
+        Schedule schedule = scheduleService.createSchedule(req.getTrainId(), req.getRouteId(), req.getDepartureTime());
         return new ResponseEntity<>(schedule, HttpStatus.CREATED);
     }
 

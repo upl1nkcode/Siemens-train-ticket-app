@@ -40,7 +40,8 @@ class StationApiControllerTest {
         when(routeService.createStation(anyString())).thenReturn(station);
 
         mockMvc.perform(post("/api/stations")
-                        .param("name", "London"))
+                        .contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"London\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("London"));
     }

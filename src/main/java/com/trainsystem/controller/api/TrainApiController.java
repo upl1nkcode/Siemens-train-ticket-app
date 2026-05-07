@@ -6,10 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/trains")
+@Validated
 public class TrainApiController {
 
     private final TrainService trainService;
@@ -28,15 +33,36 @@ public class TrainApiController {
         return trainService.getTrainById(id);
     }
 
+    public static class TrainRequest {
+        @NotBlank(message = "Train name is required")
+        private String name;
+        
+        @Min(value = 1, message = "Train must have at least 1 seat")
+        private int totalSeats;
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public int getTotalSeats() { return totalSeats; }
+        public void setTotalSeats(int totalSeats) { this.totalSeats = totalSeats; }
+    }
+
+    public static class DelayRequest {
+        @Min(value = 1, message = "Delay must be at least 1 minute")
+        private int delayMinutes;
+
+        public int getDelayMinutes() { return delayMinutes; }
+        public void setDelayMinutes(int delayMinutes) { this.delayMinutes = delayMinutes; }
+    }
+
     @PostMapping
-    public ResponseEntity<Train> createTrain(@RequestParam String name, @RequestParam int totalSeats) {
-        Train train = trainService.createTrain(name, totalSeats);
+    public ResponseEntity<Train> createTrain(@RequestBody @Valid TrainRequest req) {
+        Train train = trainService.createTrain(req.getName(), req.getTotalSeats());
         return new ResponseEntity<>(train, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public Train updateTrain(@PathVariable Long id, @RequestParam String name, @RequestParam int totalSeats) {
-        return trainService.updateTrain(id, name, totalSeats);
+    public Train updateTrain(@PathVariable Long id, @RequestBody @Valid TrainRequest req) {
+        return trainService.updateTrain(id, req.getName(), req.getTotalSeats());
     }
 
     @DeleteMapping("/{id}")
@@ -46,8 +72,8 @@ public class TrainApiController {
     }
 
     @PostMapping("/{id}/delay")
-    public ResponseEntity<Void> reportDelay(@PathVariable Long id, @RequestParam int delayMinutes) {
-        trainService.reportDelay(id, delayMinutes);
+    public ResponseEntity<Void> reportDelay(@PathVariable Long id, @RequestBody @Valid DelayRequest req) {
+        trainService.reportDelay(id, req.getDelayMinutes());
         return ResponseEntity.ok().build();
     }
 }

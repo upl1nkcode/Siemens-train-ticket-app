@@ -6,10 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stations")
+@Validated
 public class StationApiController {
 
     private final RouteService routeService;
@@ -23,9 +27,17 @@ public class StationApiController {
         return routeService.getAllStations();
     }
 
+    public static class StationRequest {
+        @NotBlank(message = "Station name is required")
+        private String name;
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+    }
+
     @PostMapping
-    public ResponseEntity<Station> createStation(@RequestParam String name) {
-        Station station = routeService.createStation(name);
+    public ResponseEntity<Station> createStation(@RequestBody @Valid StationRequest req) {
+        Station station = routeService.createStation(req.getName());
         return new ResponseEntity<>(station, HttpStatus.CREATED);
     }
 
